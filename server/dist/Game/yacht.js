@@ -28,6 +28,8 @@ export class Yacht {
         if (this.players[this.playerIdx].id !== playerId)
             return { msg: "wrong player", error: true };
         if (command === "score") {
+            if (this.leftThrows === 3)
+                return { msg: "didn't throw yet", error: true };
             if (typeof content.idx !== "number")
                 return { msg: "content idx undefined", error: true };
             if (0 <= content.idx && content.idx < emptyScore.length)
