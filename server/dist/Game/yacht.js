@@ -1,9 +1,23 @@
-const CommandTypeArray = ["throw", "fix", "select", "score"];
-const emptyScore = Array(13).fill(0);
-export class Yacht {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Yacht = exports.Room = void 0;
+const types_1 = require("../lib/types");
+const uuid_1 = require("uuid");
+class Room {
+    constructor(title, size) {
+        this.status = size === 1 ? "playing" : "waiting";
+        this.title = title;
+        this.size = size;
+        this.playerNum = 0;
+        this.id = (0, uuid_1.v4)();
+    }
+}
+exports.Room = Room;
+// TODO: try to remove bangs
+class Yacht {
     constructor(players) {
         this.players = players;
-        this.scores = Array(players.length).fill(emptyScore);
+        this.scores = Array(players.length).fill(types_1.emptyScore);
         this.playerIdx = 0;
         this.turn = 0;
         this.isEnded = false;
@@ -25,14 +39,14 @@ export class Yacht {
         }
     }
     command({ playerId, command, content }) {
-        if (this.players[this.playerIdx].id !== playerId)
+        if (this.players[this.playerIdx] !== playerId)
             return { msg: "wrong player", error: true };
         if (command === "score") {
             if (this.leftThrows === 3)
                 return { msg: "didn't throw yet", error: true };
             if (typeof content.idx !== "number")
                 return { msg: "content idx undefined", error: true };
-            if (0 <= content.idx && content.idx < emptyScore.length)
+            if (0 <= content.idx && content.idx < types_1.emptyScore.length)
                 return { msg: "content idx out of bound", error: true };
             this.scores[this.playerIdx][content.idx] =
                 this.calculateScore()[content.idx];
@@ -131,3 +145,4 @@ export class Yacht {
         return score;
     }
 }
+exports.Yacht = Yacht;

@@ -1,0 +1,9 @@
+CREATE TABLE players (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  rating INTEGER NOT NULL
+);
+
+CREATE TABLE rooms (
+  id TEXT PRIMARY KEY
+)

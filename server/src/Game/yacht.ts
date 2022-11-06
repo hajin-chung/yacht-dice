@@ -1,25 +1,26 @@
-export interface Player {
+import { CommandProps, CommandReturn, emptyScore } from "../lib/types";
+import { v4 } from "uuid";
+
+export class Room {
   id: string;
-  name: string;
+  title: string;
+  size: number;
+  playerNum: number;
+  status: "waiting" | "playing" | "done";
+  game?: Yacht;
+
+  constructor(title: string, size: number) {
+    this.status = size === 1 ? "playing" : "waiting";
+    this.title = title;
+    this.size = size;
+    this.playerNum = 0;
+    this.id = v4();
+  }
 }
 
-const CommandTypeArray = ["throw", "fix", "select", "score"] as const;
-
-interface CommandProps {
-  playerId: string;
-  command: typeof CommandTypeArray[number];
-  content: any;
-}
-
-interface CommandReturn {
-  msg: string;
-  error: boolean;
-}
-
-const emptyScore = Array(13).fill(0);
-
+// TODO: try to remove bangs
 export class Yacht {
-  players: Player[];
+  players: string[];
   /**
    * rows are player indices
    *
@@ -51,7 +52,7 @@ export class Yacht {
   selected: number[];
   leftThrows: number;
 
-  constructor(players: Player[]) {
+  constructor(players: string[]) {
     this.players = players;
     this.scores = Array(players.length).fill(emptyScore);
     this.playerIdx = 0;
@@ -78,7 +79,7 @@ export class Yacht {
   }
 
   command({ playerId, command, content }: CommandProps): CommandReturn {
-    if (this.players[this.playerIdx].id !== playerId)
+    if (this.players[this.playerIdx] !== playerId)
       return { msg: "wrong player", error: true };
 
     if (command === "score") {
@@ -89,8 +90,8 @@ export class Yacht {
       if (0 <= content.idx && content.idx < emptyScore.length)
         return { msg: "content idx out of bound", error: true };
 
-      this.scores[this.playerIdx][content.idx] =
-        this.calculateScore()[content.idx];
+      this.scores[this.playerIdx]![content.idx] =
+        this.calculateScore()[content.idx]!;
       this.nextTurn();
       return { msg: "success", error: false };
     }
@@ -120,11 +121,11 @@ export class Yacht {
         return { msg: "content fix out of bound", error: true };
 
       if (typeof content.pop === "number") {
-        this.eyes.push(this.fixed[content.pop]);
+        this.eyes.push(this.fixed[content.pop]!);
         this.fixed.splice(content.pop, 1);
       }
       if (typeof content.fix === "number") {
-        this.fixed.push(this.eyes[content.fix]);
+        this.fixed.push(this.eyes[content.fix]!);
         this.eyes.splice(content.fix, 1);
       }
 
@@ -167,7 +168,7 @@ export class Yacht {
 
     for (let i = 1; i <= 3; i++) {
       let flag = false;
-      for (let j = i; j <= i + 3; j++) flag = flag && count[j] > 0;
+      for (let j = i; j <= i + 3; j++) flag = flag && count[j]! > 0;
       if (flag) {
         isSmallStraight = true;
         break;
@@ -176,7 +177,7 @@ export class Yacht {
 
     for (let i = 1; i <= 2; i++) {
       let flag = false;
-      for (let j = i; j <= i + 4; j++) flag = flag && count[j] > 0;
+      for (let j = i; j <= i + 4; j++) flag = flag && count[j]! > 0;
       if (flag) {
         isLargeStraight = true;
         break;
@@ -184,12 +185,12 @@ export class Yacht {
     }
 
     const score = [
-      count[1],
-      count[2] * 2,
-      count[3] * 3,
-      count[4] * 4,
-      count[5] * 5,
-      count[6] * 6,
+      count[1]!,
+      count[2]! * 2,
+      count[3]! * 3,
+      count[4]! * 4,
+      count[5]! * 5,
+      count[6]! * 6,
       countCount[2] === 1 && countCount[3] === 1 ? sum : 0,
       countCount[4] === 1 ? sum : 0,
       isSmallStraight ? 15 : 0,
