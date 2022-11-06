@@ -89,6 +89,8 @@ export class Yacht {
         return { msg: "content idx undefined", error: true };
       if (0 <= content.idx && content.idx < emptyScore.length)
         return { msg: "content idx out of bound", error: true };
+      if (this.scores[this.playerIdx] === undefined) 
+        return {msg: "no score of current player index (this is some serious error!)", error: true};
 
       this.scores[this.playerIdx]![content.idx] =
         this.calculateScore()[content.idx]!;

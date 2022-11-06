@@ -11,9 +11,11 @@ export const handleCommand = ({ roomId, ...command }: CommandWithRoomProps) => {
   if (room.status === "waiting" || !room.game)
     return { error: true, msg: "room is waiting for more players" };
 
-  room.game.command(command);
+  const res = room.game.command(command);
   io.emit(roomId, room);
-  return {};
+  return res;
 };
 
-export const handleDisconnect = (socket: Socket) => {};
+export const handleDisconnect = (socket: Socket) => {
+  console.log(socket);
+};
