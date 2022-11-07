@@ -1,8 +1,8 @@
 import { Player } from "@backend/lib/types";
 import { Room } from "@backend/Game/yacht";
 import { useContext, useEffect, useState } from "preact/hooks";
-import { getRooms, createRoom } from "../api";
-import { SocketContext } from "../context";
+import { getRooms, createRoom } from "../lib/api";
+import { SocketContext } from "../lib/context";
 
 type LobbyProps = {
   player: Player;
@@ -23,7 +23,6 @@ export const Lobby = ({ player, onJoin, onExit }: LobbyProps) => {
     fetchRooms().catch((err) => console.error(err));
 
     socket.on("rooms", (rooms: Room[]) => {
-      console.log(rooms);
       setRooms(rooms);
     });
 

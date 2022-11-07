@@ -6,8 +6,8 @@ import { Game } from "./components/Game";
 
 import { Player } from "@backend/lib/types";
 import { Room } from "@backend/Game/yacht";
-import { exitRoom, joinRoom, newPlayerByName } from "./api";
-import { SocketContext } from "./context";
+import { exitRoom, joinRoom, newPlayerByName } from "./lib/api";
+import { SocketContext } from "./lib/context";
 
 export function App() {
   const [player, setPlayer] = useState<Player>();

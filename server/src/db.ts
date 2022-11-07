@@ -19,6 +19,6 @@ export class DB {
   }
 
   getPlayersInRoom(roomId: string) {
-    return this.players.filter((p) => p.room === roomId).map((p) => p.id);
+    return this.players.filter((p) => p.room === roomId);
   }
 }

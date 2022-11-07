@@ -22,7 +22,6 @@ router.post("/new", (req, res) => {
 
     db.rooms.push(room);
     io.sockets.emit("rooms", db.rooms);
-    console.log(db.rooms);
     res.status(200).json({ room });
   } catch (e) {
     res.status(500).json({ error: true, msg: e });
@@ -49,7 +48,7 @@ router.post("/join", (req, res) => {
     room.playerNum++;
 
     if (room.playerNum === room.size) {
-      room.game = new Yacht(db.getPlayersInRoom(room.id));
+      room.game = new Yacht(db.getPlayersInRoom(room.id).map((p) => p.id));
       room.status = "playing";
     }
 

@@ -66,7 +66,7 @@ export const getPlayerById = async (playerId: string): Promise<Player> => {
 };
 
 export const getPlayersInRoom = async (roomId: string): Promise<Player[]> => {
-  const res = await fetch(`${API_ENDPOINT}/user/${roomId}`);
+  const res = await fetch(`${API_ENDPOINT}/user/room/${roomId}`);
   const { players } = await res.json();
   return players;
 };

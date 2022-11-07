@@ -19,6 +19,7 @@ export interface CommandReturn {
 
 export interface CommandWithRoomProps extends CommandProps {
   roomId: string;
+  callback: (res: CommandReturn) => void;
 }
 
 export const emptyScore = Array(13).fill(0);
