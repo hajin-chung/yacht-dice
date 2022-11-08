@@ -1,6 +1,8 @@
 import { Router } from "express";
 import type { DB } from "../db";
-import { Room, Yacht } from "../Game/yacht";
+import { Yacht } from "../../../yacht/yacht";
+import { Room } from "../../../yacht/types";
+import { v4 } from "uuid";
 import { getState } from "../state";
 import type { Server } from "socket.io";
 
@@ -16,12 +18,13 @@ router.post("/new", (req, res) => {
   const db: DB = getState("db");
   try {
     const { title, size } = req.body;
-    const room = new Room(title, size);
+    const room = new Room(v4(), title, size);
 
-    console.log(`[server] new room ${room.id}`);
+    console.log(`[server] new roo ${room.id}`);
 
     db.rooms.push(room);
     io.sockets.emit("rooms", db.rooms);
+    io.sockets.emit(room.id, room);
     res.status(200).json({ room });
   } catch (e) {
     res.status(500).json({ error: true, msg: e });
@@ -51,6 +54,7 @@ router.post("/join", (req, res) => {
       room.game = new Yacht(db.getPlayersInRoom(room.id).map((p) => p.id));
       room.status = "playing";
     }
+    console.log(room);
 
     io.sockets.emit(room.id, room);
     io.sockets.emit("rooms", db.rooms);
