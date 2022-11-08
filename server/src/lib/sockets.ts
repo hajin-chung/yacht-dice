@@ -20,6 +20,7 @@ export const handleCommand = (
     callback(res);
     io.emit(roomId, room);
   } catch (e) {
+    console.error(e);
     callback(<CommandReturn>e);
   }
 };

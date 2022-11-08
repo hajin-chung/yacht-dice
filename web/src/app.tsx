@@ -27,6 +27,7 @@ export function App() {
     setPlayer({ ...player, room: roomId });
 
     socket.on(roomId, (newRoom: Room) => {
+      console.log(newRoom);
       setRoom(newRoom);
     });
   };

@@ -58,7 +58,7 @@ export class Yacht {
     this.playerIdx = 0;
     this.turn = 0;
     this.isEnded = false;
-    this.eyes = [];
+    this.eyes = [0, 0, 0, 0, 0];
     this.fixed = [];
     this.selected = [];
     this.leftThrows = 3;
@@ -67,7 +67,7 @@ export class Yacht {
   nextTurn() {
     this.turn++;
     this.playerIdx = (this.turn + 1) % this.players.length;
-    this.eyes = [];
+    this.eyes = [0, 0, 0, 0, 0];
     this.fixed = [];
     this.selected = [];
     this.leftThrows = 3;
@@ -87,10 +87,13 @@ export class Yacht {
         return { msg: "didn't throw yet", error: true };
       if (typeof content.idx !== "number")
         return { msg: "content idx undefined", error: true };
-      if (0 <= content.idx && content.idx < emptyScore.length)
+      if (!(0 <= content.idx && content.idx < emptyScore.length))
         return { msg: "content idx out of bound", error: true };
-      if (this.scores[this.playerIdx] === undefined) 
-        return {msg: "no score of current player index (this is some serious error!)", error: true};
+      if (this.scores[this.playerIdx] === undefined)
+        return {
+          msg: "no score of current player index (this is some serious error!)",
+          error: true,
+        };
 
       this.scores[this.playerIdx]![content.idx] =
         this.calculateScore()[content.idx]!;
@@ -145,8 +148,10 @@ export class Yacht {
   }
 
   throw(): number[] {
-    const eyes = Array(this.eyes.length).map((_) => this.throwSingleDice());
-
+    const eyes = <number[]>[];
+    for (let i = 0; i < this.eyes.length; i++)
+      eyes.push(this.throwSingleDice());
+    console.log(eyes);
     return eyes;
   }
 

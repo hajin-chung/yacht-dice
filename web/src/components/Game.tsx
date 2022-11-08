@@ -45,30 +45,36 @@ export const Game = ({ player, room }: GameProps) => {
   const onThrow = () => {
     // player throws dice
     // socket emit throw command
-    socket.emit("command", {
-      playerId: player.id,
-      command: "throw",
-      roomId: room.id,
-      callback: (res: CommandReturn) => {
+    socket.emit(
+      "command",
+      {
+        playerId: player.id,
+        command: "throw",
+        roomId: room.id,
+      },
+      (res: CommandReturn) => {
         // TODO: error check
         console.log(res);
       },
-    });
+    );
   };
 
   const onFix = ({ pop, fix }: onFixProps) => {
     // player fixes thrown dices
     // socket emit fix command
-    socket.emit("command", {
-      playerId: player.id,
-      command: "fix",
-      content: { pop, fix },
-      roomId: room.id,
-      callback: (res: CommandReturn) => {
+    socket.emit(
+      "command",
+      {
+        playerId: player.id,
+        command: "fix",
+        content: { pop, fix },
+        roomId: room.id,
+      },
+      (res: CommandReturn) => {
         // TODO: error check
         console.log(res);
       },
-    });
+    );
   };
 
   return (
@@ -83,7 +89,7 @@ export const Game = ({ player, room }: GameProps) => {
           room={room}
           onScore={onScore}
         />
-        <Dices player={player} onThrow={onThrow} onFix={onFix} />
+        <Dices player={player} room={room} onThrow={onThrow} onFix={onFix} />
       </div>
     </div>
   );
@@ -169,10 +175,42 @@ type onFixProps = {
 
 type DicesProps = {
   player: Player;
+  room: Room;
   onThrow: () => void;
   onFix: (props: onFixProps) => void;
 };
 
-const Dices = ({ player, onThrow, onFix }: DicesProps) => {
-  return <div></div>;
+const Dices = ({ player, room, onThrow, onFix }: DicesProps) => {
+  const game = room.game!;
+  const playerIdOfTurn = game.players[game.playerIdx];
+  const isPlayerTurn = player.id === playerIdOfTurn;
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex w-full justify-between">
+        {game.fixed.map((eye, idx) => (
+          <Dice eye={eye} onClick={() => isPlayerTurn && onFix({ pop: idx })} />
+        ))}
+        {Array(5 - game.fixed.length).map((_) => (
+          <Dice eye={0} />
+        ))}
+      </div>
+      <div className="flex w-full justify-between">
+        {game.eyes.map((eye, idx) => (
+          <Dice eye={eye} onClick={() => isPlayerTurn && onFix({ fix: idx })} />
+        ))}
+      </div>
+      <button onClick={() => isPlayerTurn && onThrow()}>Throw</button>
+    </div>
+  );
+};
+
+type DiceProps = {
+  eye: number;
+  onClick?: () => void;
+};
+
+const Dice = ({ eye, onClick }: DiceProps) => {
+  if (eye === 0) return <div></div>;
+  return <div onClick={() => onClick && onClick()}>{eye}</div>;
 };
