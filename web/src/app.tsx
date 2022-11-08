@@ -4,8 +4,7 @@ import { Start } from "./components/Start";
 import { Lobby } from "./components/Lobby";
 import { Game } from "./components/Game";
 
-import { Player } from "@backend/lib/types";
-import { Room } from "@backend/Game/yacht";
+import { Player, Room } from "@yacht/types";
 import { exitRoom, joinRoom, newPlayerByName } from "./lib/api";
 import { SocketContext } from "./lib/context";
 

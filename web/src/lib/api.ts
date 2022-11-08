@@ -1,5 +1,4 @@
-import { Room } from "@backend/Game/yacht";
-import { Player } from "@backend/lib/types";
+import { Player, Room } from "@yacht/types";
 
 const API_ENDPOINT = "http://127.0.0.1:3000";
 

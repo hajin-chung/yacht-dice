@@ -1,13 +1,15 @@
 import type { Socket } from "socket.io";
 import type { DB } from "../db";
-import type { CommandReturn, CommandWithRoomProps } from "../lib/types";
+import type { CommandWithRoomProps } from "../lib/types";
+import type { CommandReturn } from "../../../yacht/yacht";
 import { getState } from "../state";
 
 export const handleCommand = (
   { roomId, ...command }: CommandWithRoomProps,
   callback: (res: CommandReturn) => void,
 ) => {
-  console.log({ roomId, callback, command });
+  console.log(`[server] command ${command.command} to ${roomId}`);
+  console.log("content", command.content);
   const db: DB = getState("db");
   const io = getState("io");
   const room = db.rooms.find((r) => r.id === roomId);
@@ -17,6 +19,7 @@ export const handleCommand = (
       throw { error: true, msg: "room is waiting for more players" };
 
     const res = room.game.command(command);
+    console.log(res);
     callback(res);
     io.emit(roomId, room);
   } catch (e) {
@@ -26,6 +29,5 @@ export const handleCommand = (
 };
 
 export const handleDisconnect = (socket: Socket) => {
-  // console.log(socket);
   socket;
 };

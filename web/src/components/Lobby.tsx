@@ -1,5 +1,4 @@
-import { Player } from "@backend/lib/types";
-import { Room } from "@backend/Game/yacht";
+import { Player, Room } from "@yacht/types";
 import { useContext, useEffect, useState } from "preact/hooks";
 import { getRooms, createRoom } from "../lib/api";
 import { SocketContext } from "../lib/context";

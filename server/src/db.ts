@@ -1,5 +1,4 @@
-import type { Room } from "./Game/yacht";
-import type { Player } from "./lib/types";
+import type { Room, Player } from "../../yacht/types";
 
 export class DB {
   players: Player[];

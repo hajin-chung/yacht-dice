@@ -16,7 +16,8 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "paths": { "@backend/*": ["../server/src/*"] }
+    "noUncheckedIndexedAccess": false,
+    "paths": { "@yacht/*": ["../yacht/*"], "@server/*": ["../server/src/*"] }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

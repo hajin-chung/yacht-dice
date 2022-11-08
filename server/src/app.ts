@@ -34,7 +34,7 @@ const main = async () => {
   app.use("/user", userRouter);
 
   server.listen(port, () => {
-    console.log(`[server] Server listening to port ${port}`);
+    console.log(`[server] Server listening to http://localhost:${port}`);
   });
 
   io.on("connection", (socket) => {

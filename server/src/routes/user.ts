@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { v4 } from "uuid";
 import type { DB } from "../db";
-import type { Player } from "../lib/types";
+import type { Player } from "../../../yacht/types";
 import { getState } from "../state";
 
 const router = Router();
@@ -9,6 +9,12 @@ const router = Router();
 router.post("/new", async (req, res) => {
   const db: DB = getState("db");
   const { name } = req.body;
+
+  if (name == "") {
+    res.status(500).json({ error: true, msg: "no username" });
+    return;
+  }
+
   const id = v4();
   const player: Player = { id, name };
   db.players.push(player);

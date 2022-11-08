@@ -7,14 +7,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "noUncheckedIndexedAccess": false,
     "outDir": "./dist"
   },
-  "include": [
-    "./src/**/*.ts",
-    "./src/**/*.tsx",
-  ],
-  "exclude": [
-    "node_modules",
-    ".vscode"
-  ]
+  "include": ["src/**/*", "src/**/*.tsx", "../yacht/**/*.ts"],
+  "exclude": ["node_modules", ".vscode"]
 }

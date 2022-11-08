@@ -3,7 +3,8 @@
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "Node",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "paths": { "@yacht/*": ["../yacht/*"], "@server/*": ["../server/src/*"] }
   },
   "include": ["vite.config.ts"]
 }

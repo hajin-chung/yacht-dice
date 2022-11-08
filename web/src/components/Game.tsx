@@ -1,9 +1,9 @@
-import { Room } from "@backend/Game/yacht";
-import { CommandProps, CommandReturn, Player } from "@backend/lib/types";
+// import type { CommandReturn } from "@yacht/yacht";
+import { CommandReturn, ScoreNames, calculateScore } from "@yacht/yacht";
+import { Player, Room } from "@yacht/types";
 import { useContext, useEffect, useState } from "preact/hooks";
 import { getPlayersInRoom } from "../lib/api";
 import { SocketContext } from "../lib/context";
-import { calculateScore } from "../lib/utils";
 
 type GameProps = {
   player: Player;
@@ -37,7 +37,7 @@ export const Game = ({ player, room }: GameProps) => {
       },
       (res: CommandReturn) => {
         // TODO: error check
-        console.log(res);
+        console.log("client", res);
       },
     );
   };
@@ -54,7 +54,7 @@ export const Game = ({ player, room }: GameProps) => {
       },
       (res: CommandReturn) => {
         // TODO: error check
-        console.log(res);
+        console.log("client", res);
       },
     );
   };
@@ -72,7 +72,7 @@ export const Game = ({ player, room }: GameProps) => {
       },
       (res: CommandReturn) => {
         // TODO: error check
-        console.log(res);
+        console.log("client", res);
       },
     );
   };
@@ -122,15 +122,28 @@ type ScoreBoardProps = {
 const ScoreBoard = ({ player, players, room, onScore }: ScoreBoardProps) => {
   const game = room.game!;
   const playerIdOfTurn = game.players[game.playerIdx];
-  // const currentPlayer = players.find(p => p.id === currentPlayerId);
 
   return (
     <div className="flex gap-1">
+      <div className="flex flex-col gap-1 items-center">
+        <div>players</div>
+        {ScoreNames.map((name) => (
+          <div className="font-bold" key={name}>
+            {name}
+          </div>
+        ))}
+      </div>
       {players.map((playerOfCol, idx) => {
         let scoreList = game.scores[idx];
+        let fixedList = game.fixedScores[idx];
         const playerIdOfCol = playerOfCol.id;
-        if (playerIdOfCol === playerIdOfTurn)
-          scoreList = calculateScore([...game.fixed, ...game.eyes]);
+        if (playerIdOfCol === playerIdOfTurn) {
+          let calculatedScores = calculateScore(game.fixed, game.eyes);
+          scoreList = scoreList.map((s, i) => {
+            if (fixedList[i]) return s;
+            else return calculatedScores[i];
+          });
+        }
 
         return (
           <div className="flex flex-col gap-1 items-center">
@@ -145,7 +158,9 @@ const ScoreBoard = ({ player, players, room, onScore }: ScoreBoardProps) => {
               return (
                 <div
                   className={`font-bold rounded-lg px-2 box-border border-gray-700 ${
-                    playerIdOfTurn === playerIdOfCol && "text-gray-400"
+                    playerIdOfTurn === playerIdOfCol &&
+                    !fixedList[idx] &&
+                    "text-gray-400"
                   } ${
                     playerIdOfTurn === player.id &&
                     playerIdOfTurn === playerIdOfCol &&
