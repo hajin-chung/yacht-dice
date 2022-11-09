@@ -125,10 +125,10 @@ const ScoreBoard = ({ player, players, room, onScore }: ScoreBoardProps) => {
 
   return (
     <div className="flex gap-1">
-      <div className="flex flex-col gap-1 items-center">
+      <div className="flex flex-col gap-2 items-center">
         <div>players</div>
         {ScoreNames.map((name) => (
-          <div className="font-bold" key={name}>
+          <div className="font-bold text-center" key={name}>
             {name}
           </div>
         ))}
@@ -146,7 +146,7 @@ const ScoreBoard = ({ player, players, room, onScore }: ScoreBoardProps) => {
         }
 
         return (
-          <div className="flex flex-col gap-1 items-center">
+          <div className="flex flex-col gap-2 items-center">
             <div
               className={`px-4 rounded-lg font-bold text-center ${
                 playerIdOfCol === playerIdOfTurn && "bg-green-200"
@@ -201,21 +201,36 @@ const Dices = ({ player, room, onThrow, onFix }: DicesProps) => {
   const isPlayerTurn = player.id === playerIdOfTurn;
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex w-full justify-between">
+    <div className="w-full flex flex-col gap-2 px-10">
+      <div className="text-gray-600">Left throws: {game.leftThrows}</div>
+      <div className="flex w-full gap-2 justify-between">
         {game.fixed.map((eye, idx) => (
           <Dice eye={eye} onClick={() => isPlayerTurn && onFix({ pop: idx })} />
         ))}
-        {Array(5 - game.fixed.length).map((_) => (
-          <Dice eye={0} />
-        ))}
+        {Array(5 - game.fixed.length)
+          .fill(0)
+          .map((_) => (
+            <Dice eye={0} />
+          ))}
       </div>
-      <div className="flex w-full justify-between">
+      <div className="flex w-full gap-2 justify-between">
         {game.eyes.map((eye, idx) => (
           <Dice eye={eye} onClick={() => isPlayerTurn && onFix({ fix: idx })} />
         ))}
+        {Array(5 - game.eyes.length)
+          .fill(0)
+          .map((_) => (
+            <Dice eye={0} />
+          ))}
       </div>
-      <button onClick={() => isPlayerTurn && onThrow()}>Throw</button>
+      <button
+        onClick={() => isPlayerTurn && onThrow()}
+        className={`border-4 border-gray-200 rounded-lg p-2 font-bold text-2xl text-gray-400 ${
+          game.leftThrows > 0 && "hover:border-gray-500 text-black"
+        }`}
+      >
+        Throw
+      </button>
     </div>
   );
 };
@@ -226,6 +241,17 @@ type DiceProps = {
 };
 
 const Dice = ({ eye, onClick }: DiceProps) => {
-  if (eye === 0) return <div></div>;
-  return <div onClick={() => onClick && onClick()}>{eye}</div>;
+  console.log(eye);
+  return (
+    <div
+      className={`flex justify-center items-center w-1/5 aspect-square text-3xl font-bold rounded-lg ${
+        onClick && "cursor-pointer"
+      } ${eye !== 0 && "hover:border-4"}
+      ${eye === 0 && "hover:border-dashed hover:border-4"} 
+      `}
+      onClick={() => onClick && onClick()}
+    >
+      {eye !== 0 && eye}
+    </div>
+  );
 };
