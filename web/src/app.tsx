@@ -21,14 +21,15 @@ export function App() {
 
   const onJoin = async (roomId: string) => {
     if (!player) throw "player undefined";
-    const newRoom = await joinRoom(player.id, roomId);
-    setRoom(newRoom);
-    setPlayer({ ...player, room: roomId });
-
-    socket.on(roomId, (newRoom: Room) => {
-      console.log(newRoom);
+    try {
+      const newRoom = await joinRoom(player.id, roomId);
       setRoom(newRoom);
-    });
+      setPlayer({ ...player, room: roomId });
+
+      socket.on(roomId, (newRoom: Room) => {
+        setRoom(newRoom);
+      });
+    } catch (e) {}
   };
 
   const onExit = async () => {

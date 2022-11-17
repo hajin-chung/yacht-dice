@@ -4,6 +4,7 @@ import { Player, Room } from "@yacht/types";
 import { useContext, useEffect, useState } from "preact/hooks";
 import { getPlayersInRoom } from "../lib/api";
 import { SocketContext } from "../lib/context";
+import { Dice } from "./Dice";
 
 type GameProps = {
   player: Player;
@@ -18,7 +19,6 @@ export const Game = ({ player, room }: GameProps) => {
     const fetchPlayersInRoom = async () => {
       const playersInRoom = await getPlayersInRoom(room.id);
       setPlayers(playersInRoom);
-      console.log({ player, room, players });
     };
 
     fetchPlayersInRoom().catch((err) => console.error(err));
@@ -77,8 +77,13 @@ export const Game = ({ player, room }: GameProps) => {
     );
   };
 
+  const onEndClick = () => {};
+
   return (
-    <div className="flex flex-col w-[600px]">
+    <div className="flex flex-col">
+      {room.status === "done" && (
+        <Ending room={room} players={players} onEndClick={onEndClick} />
+      )}
       <div className="h-5" />
       <Top title={room.title} player={player} />
       <div className="h-5" />
@@ -124,11 +129,11 @@ const ScoreBoard = ({ player, players, room, onScore }: ScoreBoardProps) => {
   const playerIdOfTurn = game.players[game.playerIdx];
 
   return (
-    <div className="flex gap-1">
-      <div className="flex flex-col gap-2 items-center">
+    <div className="flex">
+      <div className="flex flex-col gap-2 items-start w-40">
         <div>players</div>
         {ScoreNames.map((name) => (
-          <div className="font-bold text-center" key={name}>
+          <div className="font-bold" key={name}>
             {name}
           </div>
         ))}
@@ -138,7 +143,7 @@ const ScoreBoard = ({ player, players, room, onScore }: ScoreBoardProps) => {
         let fixedList = game.fixedScores[idx];
         const playerIdOfCol = playerOfCol.id;
         if (playerIdOfCol === playerIdOfTurn) {
-          let calculatedScores = calculateScore(game.fixed, game.eyes);
+          let calculatedScores = calculateScore([...game.fixed, ...game.eyes]);
           scoreList = scoreList.map((s, i) => {
             if (fixedList[i]) return s;
             else return calculatedScores[i];
@@ -164,7 +169,7 @@ const ScoreBoard = ({ player, players, room, onScore }: ScoreBoardProps) => {
                   } ${
                     playerIdOfTurn === player.id &&
                     playerIdOfTurn === playerIdOfCol &&
-                    "hover:border-2 hover:text-gray-700"
+                    "hover:border-2 hover:text-gray-700 hover:m-[-2px]"
                   }`}
                   onClick={() =>
                     playerIdOfTurn === playerIdOfCol &&
@@ -202,7 +207,6 @@ const Dices = ({ player, room, onThrow, onFix }: DicesProps) => {
 
   return (
     <div className="w-full flex flex-col gap-2 px-10">
-      <div className="text-gray-600">Left throws: {game.leftThrows}</div>
       <div className="flex w-full gap-2 justify-between">
         {game.fixed.map((eye, idx) => (
           <Dice eye={eye} onClick={() => isPlayerTurn && onFix({ pop: idx })} />
@@ -229,29 +233,40 @@ const Dices = ({ player, room, onThrow, onFix }: DicesProps) => {
           game.leftThrows > 0 && "hover:border-gray-500 text-black"
         }`}
       >
-        Throw
+        Throw {game.leftThrows}
       </button>
     </div>
   );
 };
 
-type DiceProps = {
-  eye: number;
-  onClick?: () => void;
+type EndingProps = {
+  room: Room;
+  players: Player[];
+  onEndClick: () => void;
 };
 
-const Dice = ({ eye, onClick }: DiceProps) => {
-  console.log(eye);
+const Ending = ({ room, players, onEndClick }: EndingProps) => {
+  const scoreSums = room.game!.scores.map((s) =>
+    s.reduce((p, c) => p! + c!, 0),
+  );
+  let isDraw = false;
+  let winner: Player;
+  let winnerScore = -1;
+  scoreSums.forEach((s, i) => {
+    if (!s) return;
+    if (s == winnerScore) isDraw = true;
+    if (s > winnerScore) {
+      winnerScore = s;
+      winner = players[i];
+    }
+  });
+
   return (
-    <div
-      className={`flex justify-center items-center w-1/5 aspect-square text-3xl font-bold rounded-lg ${
-        onClick && "cursor-pointer"
-      } ${eye !== 0 && "hover:border-4"}
-      ${eye === 0 && "hover:border-dashed hover:border-4"} 
-      `}
-      onClick={() => onClick && onClick()}
-    >
-      {eye !== 0 && eye}
+    <div className="fixed top-0 bottom-0 flex w-screen h-screen items-center justify-center backdrop-blur-lg">
+      <div className="p-10 rounded-xl bg-white flex flex-col justify-center items-center">
+        <h1>{isDraw ? "Draw!" : `winner ${winner!.name}`}</h1>
+        <button onClick={() => onEndClick()}>Go home</button>
+      </div>
     </div>
   );
 };

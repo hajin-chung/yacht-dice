@@ -20,7 +20,6 @@ export const ScoreNames = [
   "fours",
   "fives",
   "sixes",
-  "bonus",
   "full house",
   "four of a kind",
   "small straight",
@@ -46,6 +45,13 @@ export class Yacht {
   fixedScores: (boolean | undefined)[][];
   turn: number;
   isEnded: boolean;
+  isDraw: boolean;
+
+  /**
+   * player id of winner
+   */
+  winner: string | undefined;
+  winnerScore: number;
 
   /**
    *  fixed dices
@@ -84,6 +90,9 @@ export class Yacht {
     this.fixed = [];
     this.selected = [];
     this.leftThrows = 3;
+    this.winner = undefined;
+    this.winnerScore = 0;
+    this.isDraw = false;
   }
 
   nextTurn() {
@@ -94,8 +103,8 @@ export class Yacht {
     this.selected = [];
     this.leftThrows = 3;
 
+    // game end
     if (this.turn === 12 * this.players.length + 1) {
-      // game end
       this.isEnded = true;
     }
   }
@@ -128,14 +137,8 @@ export class Yacht {
 
       const calculatedScore = this.calculateScore()[content.idx];
 
-      console.log(
-        this.playerIdx,
-        this.scores[this.playerIdx][content.idx],
-        calculatedScore,
-      );
       this.scores[this.playerIdx][content.idx] = calculatedScore;
       this.fixedScores[this.playerIdx][content.idx] = true;
-      console.log(this.playerIdx, this.scores);
       this.nextTurn();
       return { msg: "success", error: false };
     }
@@ -194,30 +197,24 @@ export class Yacht {
   }
 
   calculateScore() {
-    return calculateScore(this.fixed, this.eyes);
+    return calculateScore([...this.fixed, ...this.eyes]);
   }
 }
 
-export const calculateScore = (fixed: number[], eyes: number[]) => {
-  const dices = [...fixed, ...eyes];
-
+export const calculateScore = (dices: number[]) => {
   const count = [0, 0, 0, 0, 0, 0, 0];
   const countCount = [0, 0, 0, 0, 0, 0];
   let sum = 0;
-  let sumSingles = 0;
   dices.forEach((eye) => {
     eye !== 0 && count[eye]++;
     sum += eye;
   });
   count.forEach((c, i) => {
     countCount[c]++;
-    sumSingles += c * i;
   });
 
   let isSmallStraight = false;
   let isLargeStraight = false;
-
-  console.log(count);
 
   for (let i = 1; i <= 3; i++) {
     let flag = true;
@@ -231,7 +228,6 @@ export const calculateScore = (fixed: number[], eyes: number[]) => {
   for (let i = 1; i <= 2; i++) {
     let flag = true;
     for (let j = i; j <= i + 4; j++) flag = flag && count[j] > 0;
-    console.log(flag);
     if (flag) {
       isLargeStraight = true;
       break;
@@ -245,7 +241,6 @@ export const calculateScore = (fixed: number[], eyes: number[]) => {
     count[4]! * 4,
     count[5]! * 5,
     count[6]! * 6,
-    sumSingles >= 63 ? 35 : 0,
     countCount[2] === 1 && countCount[3] === 1 ? sum : 0,
     countCount[4] === 1 ? sum : 0,
     isSmallStraight ? 15 : 0,

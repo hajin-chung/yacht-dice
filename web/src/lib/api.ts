@@ -46,8 +46,9 @@ export const joinRoom = async (
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ player, roomId }),
   });
-  const { room } = await res.json();
-  return room;
+  const data = await res.json();
+  if (data.room) return data.room;
+  throw data;
 };
 
 export const exitRoom = async (player: string) => {

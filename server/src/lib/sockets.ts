@@ -9,18 +9,23 @@ export const handleCommand = (
   callback: (res: CommandReturn) => void,
 ) => {
   console.log(`[server] command ${command.command} to ${roomId}`);
-  console.log("content", command.content);
+  console.log("[server] command content: ", command.content);
   const db: DB = getState("db");
   const io = getState("io");
-  const room = db.rooms.find((r) => r.id === roomId);
+  const roomIdx = db.rooms.findIndex((r) => r.id === roomId);
+  const room = db.rooms[roomIdx];
   try {
     if (room === undefined) throw { error: true, msg: "wrong room id" };
     if (room.status === "waiting" || !room.game)
       throw { error: true, msg: "room is waiting for more players" };
 
     const res = room.game.command(command);
-    console.log(res);
     callback(res);
+    if (room.game.isEnded) {
+      room.status = "done";
+      db.rooms.splice(roomIdx, 1);
+    }
+
     io.emit(roomId, room);
   } catch (e) {
     console.error(e);

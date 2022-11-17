@@ -18,7 +18,7 @@ router.post("/new", async (req, res) => {
   const id = v4();
   const player: Player = { id, name };
   db.players.push(player);
-  console.log(`[server] new user ${name}`);
+  console.log(`[server] new user ${name}:${id}`);
   res.status(200).json({ player });
 });
 
