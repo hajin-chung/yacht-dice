@@ -1,13 +1,12 @@
-import { defineConfig } from "vite";
-import preact from "@preact/preset-vite";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig } from 'vite';
+import solidPlugin from 'vite-plugin-solid';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [preact(), tsconfigPaths()],
+  plugins: [solidPlugin()],
+  server: {
+    port: 3000,
+  },
   build: {
-    rollupOptions: {
-      external: ["@yacht/yacht", "@yacht/types"],
-    },
+    target: 'esnext',
   },
 });

@@ -1,36 +1,18 @@
-import { ComponentChildren } from "preact";
-import { useState } from "preact/hooks";
-import { JSXInternal } from "preact/src/jsx";
+import { Component, JSX } from "solid-js";
 
-type ButtonProps = {
-  disabled: boolean;
-  children: ComponentChildren;
-  color: string;
-  borderColor: string;
-  onClick: JSXInternal.MouseEventHandler<HTMLButtonElement>;
+type Props = {
+  text: string;
+  className?: string;
+  onClick?: JSX.EventHandler<HTMLButtonElement, MouseEvent>;
 };
 
-export const Button = ({
-  disabled,
-  children,
-  onClick,
-  color,
-  borderColor,
-}: ButtonProps) => {
-  const [hover, setHover] = useState(false);
-
+export const Button: Component<Props> = ({ text, onClick, className }) => {
   return (
     <button
+      class={`font-bold border-2 border-black outline-none rounded-lg py-1 px-2 ${className}`}
       onClick={onClick}
-      style={{
-        backgroundColor: hover ? borderColor : color,
-        borderColor: borderColor,
-      }}
-      className="order-2 rounded-lg px-2 py-1 font-bold"
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
     >
-      {children}
+      {text}
     </button>
   );
 };
