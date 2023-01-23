@@ -26,9 +26,9 @@ const Home: Component = () => {
   });
 
   return (
-    <main class="relative flex flex-col w-screen h-screen items-center justify-between py-20 px-5">
+    <main class="relative flex flex-col w-screen h-screen items-center gap-10 justify-center py-20 px-5">
       <p class="text-3xl font-bold">Yacht!</p>
-      <div class="flex flex-col gap-4 w-full">
+      <div class="flex flex-col gap-4 w-full items-center">
         <Input
           placeholder="Your name is..."
           value={name()}

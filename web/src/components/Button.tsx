@@ -9,7 +9,7 @@ type Props = {
 export const Button: Component<Props> = ({ text, onClick, className }) => {
   return (
     <button
-      class={`font-bold border-2 border-black outline-none rounded-lg py-1 px-2 ${className}`}
+      class={`font-bold border-2 border-black outline-none rounded-lg py-1 px-2 w-full max-w-lg ${className}`}
       onClick={onClick}
     >
       {text}

@@ -19,7 +19,7 @@ export const Input: Component<Props> = ({
       type="text"
       value={value}
       onInput={onInput}
-      class={`p-2 font-bold border-2 border-black rounded-lg outline-none w-full ${className}`}
+      class={`p-2 font-bold border-2 border-black rounded-lg outline-none w-full max-w-lg ${className}`}
     />
   );
 };
